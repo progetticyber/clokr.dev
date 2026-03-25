@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLOKR — AI Privacy Shield | Mask Sensitive Data Before It Reaches AI Chatbots</title>
+  <meta name="description" content="CLOKR is a free, open-source Chrome extension that automatically masks emails, credit cards, IBANs, tax codes and other PII before they reach ChatGPT, Claude or Gemini. 100% local processing, zero servers, zero tracking." />
+  <meta name="keywords" content="AI privacy, data masking, PII protection, ChatGPT privacy, Claude privacy, Gemini privacy, browser extension, Chrome extension, open source, GDPR, data leak prevention" />
+  <meta name="author" content="CLOKR Team" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+  <link rel="canonical" href="https://clokr.dev/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CLOKR — AI Privacy Shield" />
+  <meta property="og:description" content="Mask sensitive data before it reaches AI chatbots. Free, open-source, 100% local. No servers, no tracking." />
+  <meta property="og:url" content="https://clokr.dev/" />
+  <meta property="og:image" content="https://clokr.dev/og-image.png" />
+  <meta property="og:site_name" content="CLOKR" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CLOKR — AI Privacy Shield" />
+  <meta name="twitter:description" content="Mask sensitive data before it reaches AI chatbots. Free, open-source, 100% local." />
+  <meta name="twitter:image" content="https://clokr.dev/og-image.png" />
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "CLOKR — AI Privacy Shield",
+    "alternateName": "CLOKR",
+    "applicationCategory": "BrowserApplication",
+    "applicationSubCategory": "Privacy & Security",
+    "operatingSystem": "Chrome OS, Windows, macOS, Linux",
+    "browserRequirements": "Google Chrome 88+, Manifest V3",
+    "softwareVersion": "2.1.0",
+    "url": "https://clokr.dev/",
+    "downloadUrl": "https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE",
+    "installUrl": "https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE",
+    "screenshot": "https://clokr.dev/screenshot-masking-demo.png",
+    "description": "CLOKR is a free, open-source Chrome extension that automatically detects and masks sensitive personal data (PII) — emails, phone numbers, credit card numbers, IBANs, tax codes, IP addresses, dates of birth — before they are sent to AI chatbot servers like ChatGPT, Claude, or Gemini. All processing runs 100% locally in the browser. No data ever leaves the device. No servers, no tracking, no telemetry.",
+    "featureList": [
+      "Automatic PII detection and masking before AI submission",
+      "Supports ChatGPT (chat.openai.com, chatgpt.com), Claude (claude.ai), Gemini (gemini.google.com)",
+      "Detects: Email, Phone, Codice Fiscale (Italian tax code with checksum), IBAN (MOD-97 validated), Credit Card (Luhn algorithm), IPv4/IPv6, Date of Birth, Tessera Sanitaria",
+      "100% local processing — zero network calls, zero servers, zero telemetry",
+      "Manifest V3 architecture with minimal permissions (activeTab, storage only)",
+      "Automatic response de-masking — AI sees placeholders, you read original values",
+      "Session-only memory — PII mappings never persisted to disk",
+      "Anti-injection placeholders with random session IDs and Unicode guillemets",
+      "Open source under MIT license"
+    ],
+    "permissions": "activeTab, storage",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "CLOKR",
+      "url": "https://clokr.dev/"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "codeRepository": "https://github.com/OWNER/clokr",
+    "isAccessibleForFree": true,
+    "inLanguage": ["en", "it"],
+    "keywords": "AI privacy, data masking, PII protection, ChatGPT privacy, Claude privacy, Gemini privacy, browser extension, Chrome extension, open source, GDPR compliance, data leak prevention, local-first"
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage (for AI snippet extraction) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is CLOKR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CLOKR is a free, open-source Chrome extension that automatically masks sensitive personal data (emails, phone numbers, credit cards, IBANs, tax codes, IP addresses, dates of birth) before they reach AI chatbot servers like ChatGPT, Claude, or Gemini. It runs 100% locally in the browser — no data ever leaves your device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does CLOKR send my data to any server?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. CLOKR makes zero network calls. All PII detection and masking happens entirely inside your browser using local regex engines and validation algorithms (Luhn for credit cards, MOD-97 for IBANs, official checksum for Italian tax codes). No telemetry, no analytics, no backend."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which AI platforms does CLOKR support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CLOKR supports ChatGPT (chat.openai.com and chatgpt.com), Claude (claude.ai), and Google Gemini (gemini.google.com). It intercepts input before submission and masks detected PII with anonymous placeholders."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What types of sensitive data does CLOKR detect?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CLOKR detects and masks: Email addresses (RFC 5322), phone numbers (international and Italian prefixes), Italian Codice Fiscale (with official checksum validation), IBAN numbers (ISO 13616 MOD-97), credit card numbers (Luhn algorithm with circuit detection for Visa, Mastercard, Amex), IPv4 and IPv6 addresses, dates of birth (plausibility filtered), and Italian Tessera Sanitaria numbers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is CLOKR open source?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. CLOKR is fully open source under the MIT license. The entire codebase is available on GitHub for audit, contribution, and review. There are no hidden components, no obfuscated code, and no server-side dependencies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does CLOKR differ from other AI privacy extensions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Unlike many AI privacy tools that route data through their own servers for analysis, CLOKR processes everything locally inside the browser. It uses cryptographic-grade validation (Luhn, MOD-97, checksum algorithms) instead of simple pattern matching, employs anti-injection placeholders with random session IDs, and requires only minimal permissions (activeTab and storage). It is also fully open source."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can CLOKR help with GDPR compliance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CLOKR helps prevent accidental transmission of personal data (PII) to third-party AI services, which is a common GDPR risk when employees use tools like ChatGPT or Claude for work. By masking sensitive data before it leaves the browser, CLOKR acts as a client-side data loss prevention (DLP) layer. However, CLOKR is a technical tool, not legal advice — organizations should consult their DPO for full compliance strategies."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://clokr.dev/" },
+      { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://clokr.dev/#features" },
+      { "@type": "ListItem", "position": 3, "name": "How It Works", "item": "https://clokr.dev/#how-it-works" },
+      { "@type": "ListItem", "position": 4, "name": "FAQ", "item": "https://clokr.dev/#faq" }
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════════════════════
+       CLOKR Landing — Dark Cybersecurity Aesthetic
+       Colors: Lime #4ADE80 · Black #09090B · Cyan #22D3EE
+       Fonts: Outfit (display) · JetBrains Mono (code/data)
+       ══════════════════════════════════════════════════════ */
+
+    :root {
+      --clokr-black: #09090B;
+      --clokr-dark: #0f0f12;
+      --clokr-surface: #18181b;
+      --clokr-border: rgba(244, 244, 245, 0.08);
+      --clokr-lime: #4ADE80;
+      --clokr-lime-dim: rgba(74, 222, 128, 0.12);
+      --clokr-lime-glow: rgba(74, 222, 128, 0.25);
+      --clokr-cyan: #22D3EE;
+      --clokr-cyan-dim: rgba(34, 211, 238, 0.1);
+      --clokr-text: #F4F4F5;
+      --clokr-muted: #71717a;
+      --clokr-dim: #52525b;
+      --clokr-red: #EF4444;
+      --font-display: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: var(--clokr-black);
+      color: var(--clokr-text);
+      font-family: var(--font-display);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Utility ─────────────────────────────── */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ── Noise texture overlay ───────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    /* ── Navigation ──────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 16px 0;
+      background: rgba(9, 9, 11, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--clokr-border);
+    }
+
+    nav .container {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--clokr-lime);
+      font-weight: 800; font-size: 1.25rem; letter-spacing: 0.06em;
+    }
+
+    .nav-logo svg { width: 28px; height: 32px; flex-shrink: 0; }
+
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--clokr-muted); text-decoration: none; font-size: 0.875rem;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--clokr-text); }
+
+    .btn-install {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 8px;
+      background: var(--clokr-lime); color: var(--clokr-black);
+      font-family: var(--font-display); font-weight: 700; font-size: 0.875rem;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.02em;
+      box-shadow: 0 0 20px var(--clokr-lime-glow);
+    }
+    .btn-install:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px var(--clokr-lime-glow), 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 8px;
+      background: transparent; color: var(--clokr-text);
+      font-family: var(--font-display); font-weight: 600; font-size: 0.875rem;
+      text-decoration: none; border: 1px solid var(--clokr-border);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--clokr-lime);
+      color: var(--clokr-lime);
+    }
+
+    /* ── Hero ─────────────────────────────────── */
+    .hero {
+      padding: 160px 0 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, var(--clokr-lime-glow) 0%, transparent 70%);
+      opacity: 0.15; pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 100px;
+      background: var(--clokr-lime-dim);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: var(--clokr-lime); font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.04em; margin-bottom: 28px;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--clokr-lime);
+      box-shadow: 0 0 8px var(--clokr-lime);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    h1 .highlight {
+      color: var(--clokr-lime);
+      text-shadow: 0 0 40px var(--clokr-lime-glow);
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--clokr-muted);
+      max-width: 640px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    }
+
+    /* ── Trust bar ────────────────────────────── */
+    .trust-bar {
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+      padding: 48px 0; margin-top: 20px;
+      border-top: 1px solid var(--clokr-border);
+    }
+
+    .trust-item {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--clokr-dim); font-size: 0.85rem; font-weight: 500;
+    }
+
+    .trust-icon {
+      width: 18px; height: 18px; color: var(--clokr-lime); opacity: 0.7;
+    }
+
+    /* ── Demo Section ─────────────────────────── */
+    .demo-section {
+      padding: 80px 0;
+    }
+
+    .demo-window {
+      max-width: 780px;
+      margin: 0 auto;
+      background: var(--clokr-surface);
+      border: 1px solid var(--clokr-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .demo-titlebar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--clokr-border);
+    }
+
+    .demo-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .demo-dot.red { background: #EF4444; }
+    .demo-dot.yellow { background: #FACC15; }
+    .demo-dot.green { background: #4ADE80; }
+
+    .demo-titlebar span {
+      margin-left: auto;
+      font-size: 0.75rem; color: var(--clokr-dim);
+      font-family: var(--font-mono);
+    }
+
+    .demo-body { padding: 32px; }
+
+    .demo-line {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 2.2;
+      color: var(--clokr-muted);
+    }
+
+    .demo-line .pii-original {
+      color: var(--clokr-red);
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .demo-line .pii-masked {
+      color: var(--clokr-lime);
+      background: var(--clokr-lime-dim);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .demo-line .arrow {
+      color: var(--clokr-dim);
+      margin: 0 8px;
+    }
+
+    /* ── Section headings ─────────────────────── */
+    .section-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--clokr-cyan);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--clokr-muted);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    /* ── Features grid ────────────────────────── */
+    #features {
+      padding: 100px 0;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .features-header .section-desc { margin: 0 auto; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      padding: 32px;
+      background: var(--clokr-dark);
+      border: 1px solid var(--clokr-border);
+      border-radius: 14px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(74, 222, 128, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .feature-icon {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      background: var(--clokr-lime-dim);
+      font-size: 1.25rem;
+      margin-bottom: 18px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--clokr-muted);
+      line-height: 1.6;
+    }
+
+    /* ── How it works ─────────────────────────── */
+    #how-it-works {
+      padding: 100px 0;
+      border-top: 1px solid var(--clokr-border);
+    }
+
+    .how-header { text-align: center; margin-bottom: 64px; }
+    .how-header .section-desc { margin: 0 auto; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      counter-reset: step-counter;
+    }
+
+    .step {
+      padding: 32px 28px;
+      background: var(--clokr-dark);
+      border: 1px solid var(--clokr-border);
+      border-radius: 14px;
+      position: relative;
+      counter-increment: step-counter;
+    }
+
+    .step::before {
+      content: counter(step-counter);
+      position: absolute; top: -14px; left: 28px;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--clokr-lime);
+      color: var(--clokr-black);
+      font-family: var(--font-mono);
+      font-weight: 700; font-size: 0.8rem;
+      border-radius: 6px;
+    }
+
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; margin-top: 8px; }
+    .step p { font-size: 0.875rem; color: var(--clokr-muted); line-height: 1.6; }
+
+    /* ── Protected data types ─────────────────── */
+    #protected-types {
+      padding: 100px 0;
+      border-top: 1px solid var(--clokr-border);
+    }
+
+    .types-header { text-align: center; margin-bottom: 56px; }
+    .types-header .section-desc { margin: 0 auto; }
+
+    .types-table-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      border: 1px solid var(--clokr-border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead {
+      background: rgba(255,255,255,0.03);
+    }
+
+    th {
+      text-align: left;
+      padding: 14px 20px;
+      font-weight: 600;
+      color: var(--clokr-dim);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--clokr-border);
+    }
+
+    td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--clokr-border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    td:first-child { font-weight: 600; white-space: nowrap; }
+
+    .validation-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .validation-badge.algo {
+      background: var(--clokr-lime-dim);
+      color: var(--clokr-lime);
+    }
+
+    .validation-badge.regex {
+      background: var(--clokr-cyan-dim);
+      color: var(--clokr-cyan);
+    }
+
+    .example-mask {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--clokr-muted);
+    }
+
+    .example-mask .arrow { color: var(--clokr-dim); margin: 0 6px; }
+    .example-mask .masked { color: var(--clokr-lime); font-weight: 600; }
+
+    /* ── Security architecture ────────────────── */
+    #security {
+      padding: 100px 0;
+      border-top: 1px solid var(--clokr-border);
+    }
+
+    .security-header { text-align: center; margin-bottom: 56px; }
+    .security-header .section-desc { margin: 0 auto; }
+
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .sec-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 20px 22px;
+      background: var(--clokr-dark);
+      border: 1px solid var(--clokr-border);
+      border-radius: 10px;
+    }
+
+    .sec-icon {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--clokr-lime-dim);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .sec-item strong { display: block; font-size: 0.9rem; margin-bottom: 3px; }
+    .sec-item span { font-size: 0.8rem; color: var(--clokr-muted); line-height: 1.5; }
+
+    /* ── FAQ ───────────────────────────────────── */
+    #faq {
+      padding: 100px 0;
+      border-top: 1px solid var(--clokr-border);
+    }
+
+    .faq-header { text-align: center; margin-bottom: 56px; }
+
+    .faq-list {
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    details {
+      border-bottom: 1px solid var(--clokr-border);
+    }
+
+    summary {
+      padding: 22px 0;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      list-style: none;
+      display: flex; align-items: center; justify-content: space-between;
+      color: var(--clokr-text);
+      transition: color 0.2s;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: '+';
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--clokr-dim);
+      transition: transform 0.2s;
+    }
+
+    details[open] summary::after { content: '−'; color: var(--clokr-lime); }
+    details[open] summary { color: var(--clokr-lime); }
+
+    details p {
+      padding: 0 0 22px;
+      font-size: 0.9rem;
+      color: var(--clokr-muted);
+      line-height: 1.7;
+    }
+
+    /* ── CTA ───────────────────────────────────── */
+    .cta-section {
+      padding: 100px 0;
+      text-align: center;
+      border-top: 1px solid var(--clokr-border);
+      position: relative;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse, var(--clokr-lime-glow) 0%, transparent 70%);
+      opacity: 0.08; pointer-events: none;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      color: var(--clokr-muted);
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+    }
+
+    /* ── Footer ────────────────────────────────── */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--clokr-border);
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex; justify-content: center; gap: 28px; flex-wrap: wrap;
+      margin-bottom: 16px; list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--clokr-dim); font-size: 0.85rem;
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--clokr-lime); }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--clokr-dim);
+    }
+
+    .footer-copy strong { color: var(--clokr-lime); font-weight: 700; }
+
+    /* ── Responsive ────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 130px 0 60px; }
+      .trust-bar { gap: 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .security-grid { grid-template-columns: 1fr; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 10px 14px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════════ NAVIGATION ════════════════ -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo" aria-label="CLOKR home">
+        <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 2L4 8V22C4 31.4 11.2 40.1 20 44C28.8 40.1 36 31.4 36 22V8L20 2Z" fill="#09090B" stroke="#4ADE80" stroke-width="1.5"/>
+          <path d="M24.5 16C23.1 14.7 21.1 14 19 14C14.6 14 11 17.1 11 21C11 24.9 14.6 28 19 28C21.1 28 23.1 27.3 24.5 26" stroke="#4ADE80" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <circle cx="31" cy="11" r="2" fill="#22D3EE" opacity="0.6"/>
+        </svg>
+        CLOKR
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#protected-types">Protected Data</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <a href="https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE" class="btn-install" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1v10M4 7l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Install Free
+      </a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ════════════════ HERO ════════════════ -->
+    <header class="hero" role="banner">
+      <div class="container">
+        <div class="hero-badge" aria-label="Open source and free">Open Source · MIT License · v2.1</div>
+
+        <h1>
+          <span class="highlight">Mask your data</span> before<br />
+          AI chatbots see it
+        </h1>
+
+        <p class="hero-sub">
+          CLOKR automatically detects and masks emails, credit cards, IBANs, tax codes
+          and other sensitive data before they reach ChatGPT, Claude or Gemini.
+          <strong>100% local processing. Zero servers. Zero tracking.</strong>
+        </p>
+
+        <div class="hero-actions">
+          <a href="https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE" class="btn-install" rel="noopener">
+            Install on Chrome — Free
+          </a>
+          <a href="https://github.com/OWNER/clokr" class="btn-ghost" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            View Source
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ════════════════ TRUST BAR ════════════════ -->
+    <section class="trust-bar container" aria-label="Trust indicators">
+      <div class="trust-item">
+        <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2L3 5v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V5l-7-3z"/></svg>
+        Zero network calls
+      </div>
+      <div class="trust-item">
+        <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-1 11.5L5.5 10l1.4-1.4L9 10.7l4.1-4.1 1.4 1.4L9 13.5z"/></svg>
+        Manifest V3
+      </div>
+      <div class="trust-item">
+        <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M12.5 3.5a2 2 0 00-3-1.7A2 2 0 006 3.5V6H4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-2V3.5zM8 3.5a.5.5 0 011 0V6H8V3.5zm4 0a.5.5 0 00-1 0V6h1V3.5z"/></svg>
+        Only activeTab + storage
+      </div>
+      <div class="trust-item">
+        <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"/></svg>
+        MIT License
+      </div>
+    </section>
+
+    <!-- ════════════════ DEMO ════════════════ -->
+    <section class="demo-section container" aria-label="Live masking demonstration">
+      <div class="demo-window" role="img" aria-label="Demonstration of CLOKR masking PII data in a ChatGPT prompt">
+        <div class="demo-titlebar">
+          <span class="demo-dot red"></span>
+          <span class="demo-dot yellow"></span>
+          <span class="demo-dot green"></span>
+          <span>chatgpt.com — prompt</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-line">
+            <span class="pii-original">mario.rossi@gmail.com</span>
+            <span class="arrow">→</span>
+            <span class="pii-masked">[EMAIL_1]</span>
+          </div>
+          <div class="demo-line">
+            <span class="pii-original">+39 333 1234567</span>
+            <span class="arrow">→</span>
+            <span class="pii-masked">[PHONE_1]</span>
+          </div>
+          <div class="demo-line">
+            <span class="pii-original">RSSMRA85M01H501Z</span>
+            <span class="arrow">→</span>
+            <span class="pii-masked">[CF_1]</span>
+          </div>
+          <div class="demo-line">
+            <span class="pii-original">IT60X0542811101000000123456</span>
+            <span class="arrow">→</span>
+            <span class="pii-masked">[IBAN_1]</span>
+          </div>
+          <div class="demo-line">
+            <span class="pii-original">4111 1111 1111 1111</span>
+            <span class="arrow">→</span>
+            <span class="pii-masked">[CARD_1]</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ FEATURES ════════════════ -->
+    <section id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="features-header">
+          <div class="section-eyebrow">Features</div>
+          <h2 class="section-title" id="features-title">Privacy by design, not by promise</h2>
+          <p class="section-desc">Every architectural decision in CLOKR is engineered to ensure your sensitive data never leaves your browser.</p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>100% Local Processing</h3>
+            <p>All PII detection and masking runs inside your browser. Zero network calls, zero servers, zero telemetry. Your data physically cannot leave your device.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Real-time Interception</h3>
+            <p>CLOKR intercepts the Enter key and Send button before the AI platform processes your input. PII is masked before the HTTP request fires.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔬</div>
+            <h3>Cryptographic Validation</h3>
+            <p>Not just regex: Luhn algorithm for credit cards, MOD-97 for IBANs, official checksum for Italian tax codes. Minimizes false positives.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3>Automatic De-masking</h3>
+            <p>AI sees placeholders, you read original values. CLOKR restores masked data in AI responses automatically, so your experience remains seamless.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Anti-injection Placeholders</h3>
+            <p>Placeholders use Unicode guillemets and random session IDs, making them impossible to predict or forge from the AI side.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h3>Multi-platform Support</h3>
+            <p>Full support for ChatGPT, Claude, and Google Gemini. Dedicated adapters handle each platform's unique DOM structure, including Shadow DOM.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ HOW IT WORKS ════════════════ -->
+    <section id="how-it-works" aria-labelledby="hiw-title">
+      <div class="container">
+        <div class="how-header">
+          <div class="section-eyebrow">How It Works</div>
+          <h2 class="section-title" id="hiw-title">Three steps, zero data leaks</h2>
+          <p class="section-desc">CLOKR operates as an invisible shield between you and the AI. Here's what happens when you hit Enter.</p>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <h3>Detect</h3>
+            <p>The PII detection engine scans your input using pattern matching with cryptographic validation (Luhn, MOD-97, checksum) to identify real sensitive data with minimal false positives.</p>
+          </article>
+          <article class="step">
+            <h3>Mask</h3>
+            <p>Each detected PII item is replaced with an anonymous, session-unique placeholder. The original value is stored only in browser memory — never persisted to disk or sent anywhere.</p>
+          </article>
+          <article class="step">
+            <h3>Send</h3>
+            <p>The masked text is sent to the AI platform. The AI generates its response using placeholders. CLOKR then restores original values in the response for your eyes only.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ PROTECTED DATA TYPES ════════════════ -->
+    <section id="protected-types" aria-labelledby="types-title">
+      <div class="container">
+        <div class="types-header">
+          <div class="section-eyebrow">Protected Data</div>
+          <h2 class="section-title" id="types-title">What CLOKR catches</h2>
+          <p class="section-desc">Eight categories of PII, each with robust detection and validation logic.</p>
+        </div>
+
+        <div class="types-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Data Type</th>
+                <th scope="col">Validation</th>
+                <th scope="col">Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>📧 Email</td>
+                <td><span class="validation-badge regex">RFC 5322 Regex</span></td>
+                <td><span class="example-mask">user@domain.com <span class="arrow">→</span> <span class="masked">[EMAIL_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>📱 Phone</td>
+                <td><span class="validation-badge regex">Prefix Filter + Length</span></td>
+                <td><span class="example-mask">+39 333 1234567 <span class="arrow">→</span> <span class="masked">[PHONE_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>🪪 Codice Fiscale</td>
+                <td><span class="validation-badge algo">Checksum Algorithm</span></td>
+                <td><span class="example-mask">RSSMRA85M01H501Z <span class="arrow">→</span> <span class="masked">[CF_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>🏦 IBAN</td>
+                <td><span class="validation-badge algo">MOD-97 (ISO 13616)</span></td>
+                <td><span class="example-mask">IT60X054281110... <span class="arrow">→</span> <span class="masked">[IBAN_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>💳 Credit Card</td>
+                <td><span class="validation-badge algo">Luhn + Circuit Check</span></td>
+                <td><span class="example-mask">4111 1111 1111 1111 <span class="arrow">→</span> <span class="masked">[CARD_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>🌐 IP Address</td>
+                <td><span class="validation-badge regex">IPv4 + IPv6</span></td>
+                <td><span class="example-mask">192.168.1.1 <span class="arrow">→</span> <span class="masked">[IP_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>📅 Date of Birth</td>
+                <td><span class="validation-badge regex">Plausibility Filter</span></td>
+                <td><span class="example-mask">15/03/1985 <span class="arrow">→</span> <span class="masked">[DATE_1]</span></span></td>
+              </tr>
+              <tr>
+                <td>🏥 Tessera Sanitaria</td>
+                <td><span class="validation-badge regex">Pattern + Length</span></td>
+                <td><span class="example-mask">80380... <span class="arrow">→</span> <span class="masked">[TS_1]</span></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ SECURITY ════════════════ -->
+    <section id="security" aria-labelledby="sec-title">
+      <div class="container">
+        <div class="security-header">
+          <div class="section-eyebrow">Security Architecture</div>
+          <h2 class="section-title" id="sec-title">Built for zero trust</h2>
+          <p class="section-desc">Every layer of CLOKR is designed with the assumption that nothing outside the browser can be trusted.</p>
+        </div>
+
+        <div class="security-grid">
+          <div class="sec-item">
+            <div class="sec-icon">🚫</div>
+            <div>
+              <strong>Zero Network Calls</strong>
+              <span>The extension never contacts any server. No analytics, no telemetry, no heartbeat.</span>
+            </div>
+          </div>
+          <div class="sec-item">
+            <div class="sec-icon">📦</div>
+            <div>
+              <strong>Manifest V3</strong>
+              <span>Modern Chrome extension format with restricted APIs and enforced Content Security Policy.</span>
+            </div>
+          </div>
+          <div class="sec-item">
+            <div class="sec-icon">🔑</div>
+            <div>
+              <strong>Minimal Permissions</strong>
+              <span>Only activeTab and storage. No tabs, no webRequest, no host permissions.</span>
+            </div>
+          </div>
+          <div class="sec-item">
+            <div class="sec-icon">🔐</div>
+            <div>
+              <strong>Private State via Closures</strong>
+              <span>Internal maps (original↔placeholder) are encapsulated in IIFEs, inaccessible to page scripts.</span>
+            </div>
+          </div>
+          <div class="sec-item">
+            <div class="sec-icon">🧹</div>
+            <div>
+              <strong>Session-only Memory</strong>
+              <span>PII mappings live in RAM. Never persisted to disk, localStorage, or extension storage.</span>
+            </div>
+          </div>
+          <div class="sec-item">
+            <div class="sec-icon">🛡️</div>
+            <div>
+              <strong>XSS-safe UI</strong>
+              <span>Popup rendered with createElement exclusively — no innerHTML with dynamic data.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ FAQ ════════════════ -->
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="faq-header">
+          <div class="section-eyebrow">FAQ</div>
+          <h2 class="section-title" id="faq-title">Frequently asked questions</h2>
+        </div>
+
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">Does CLOKR send my data to any server?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. CLOKR makes zero network calls. All PII detection and masking happens entirely inside your browser using local regex engines and validation algorithms (Luhn for credit cards, MOD-97 for IBANs, official checksum for Italian tax codes). No telemetry, no analytics, no backend.</span>
+            </p>
+          </details>
+
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">Which AI platforms does CLOKR support?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">CLOKR supports ChatGPT (chat.openai.com and chatgpt.com), Claude (claude.ai), and Google Gemini (gemini.google.com). Each platform has a dedicated adapter that handles its unique DOM structure.</span>
+            </p>
+          </details>
+
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">Is CLOKR open source?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. CLOKR is fully open source under the MIT license. The entire codebase is available on GitHub for audit, contribution, and review. There are no hidden components, no obfuscated code, and no server-side dependencies.</span>
+            </p>
+          </details>
+
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">Can CLOKR help with GDPR compliance?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">CLOKR helps prevent accidental transmission of personal data to third-party AI services, which is a common GDPR risk. By masking PII before it leaves the browser, it acts as a client-side DLP layer. However, CLOKR is a technical tool, not legal advice — organizations should consult their Data Protection Officer for full compliance.</span>
+            </p>
+          </details>
+
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">How does CLOKR handle AI responses that contain my placeholders?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">CLOKR continuously monitors the AI's response stream. When it detects placeholders in the output, it automatically replaces them with the original values. The AI only ever sees anonymous tokens — you read the real data seamlessly.</span>
+            </p>
+          </details>
+
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">What permissions does CLOKR require?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Only two: activeTab (to read and modify the AI chatbot page content) and storage (to persist your on/off preference and masked item counter). No tabs permission, no webRequest, no host permissions, no clipboard access.</span>
+            </p>
+          </details>
+
+          <details itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <summary itemprop="name">How does CLOKR differ from other AI privacy extensions?</summary>
+            <p itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Unlike tools that route data through their servers, CLOKR processes everything locally. It uses cryptographic-grade validation (not just regex), employs anti-injection placeholders with random session IDs, requires only minimal permissions, and is fully open source under MIT.</span>
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ CTA ════════════════ -->
+    <section class="cta-section" aria-label="Call to action">
+      <div class="container">
+        <h2>Stop leaking data to AI.<br /><span style="color: var(--clokr-lime)">Start protecting it.</span></h2>
+        <p>Free, open source, and ready in 10 seconds.</p>
+        <div class="hero-actions">
+          <a href="https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE" class="btn-install" rel="noopener">
+            Install CLOKR — Free
+          </a>
+          <a href="https://github.com/OWNER/clokr" class="btn-ghost" rel="noopener">
+            GitHub Repository
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════════════════ FOOTER ════════════════ -->
+  <footer role="contentinfo">
+    <div class="container">
+      <ul class="footer-links">
+        <li><a href="https://github.com/OWNER/clokr">GitHub</a></li>
+        <li><a href="https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE">Chrome Web Store</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+      </ul>
+      <p class="footer-copy"><strong>CLOKR</strong> v2.1 · MIT License · Made with 🔒 for a safer AI experience</p>
+    </div>
+  </footer>
+
+</body>
+</html>

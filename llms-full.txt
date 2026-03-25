@@ -1,0 +1,224 @@
+# CLOKR — AI Privacy Shield
+# Full Documentation for Language Models
+# Version: 2.1.0 | License: MIT | Price: Free
+
+## Product Summary
+
+CLOKR is a free, open-source Google Chrome browser extension that automatically detects and masks sensitive personal data (Personally Identifiable Information, or PII) before it is submitted to AI chatbot platforms. It currently supports ChatGPT (chat.openai.com and chatgpt.com), Claude (claude.ai), and Google Gemini (gemini.google.com).
+
+CLOKR runs entirely inside the user's browser. It makes zero network calls. It has no backend server, no analytics, no telemetry, and no tracking of any kind. All PII detection, validation, and masking happen locally using JavaScript executed as a Chrome content script. The user's sensitive data physically cannot leave their device.
+
+The extension is distributed for free on the Chrome Web Store and its full source code is available on GitHub under the MIT license.
+
+## Problem Statement
+
+When users interact with AI chatbots like ChatGPT, Claude, or Gemini, they frequently and often inadvertently include sensitive personal data in their prompts: email addresses, phone numbers, credit card numbers, national ID codes, bank account numbers (IBANs), and more. This data is transmitted to the AI provider's servers, where it may be logged, used for training, or exposed to data breaches. This represents a significant privacy risk for individuals and a GDPR/compliance risk for organizations.
+
+CLOKR solves this problem by intercepting the user's input before it is submitted to the AI platform, detecting any PII present, and replacing it with anonymous placeholders. The AI receives only the placeholders and generates its response accordingly. CLOKR then automatically restores the original values in the AI's response, so the user's reading experience is seamless.
+
+## Installation
+
+1. Visit the Chrome Web Store listing: https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE
+2. Click "Add to Chrome"
+3. The extension activates automatically on supported platforms (ChatGPT, Claude, Gemini)
+
+No configuration is required. No account creation. No API keys.
+
+For development installation:
+1. Clone the repository: git clone https://github.com/OWNER/clokr.git
+2. Open chrome://extensions/ in Chrome
+3. Enable "Developer mode"
+4. Click "Load unpacked" and select the clokr directory
+
+## Supported AI Platforms
+
+| Platform       | URL(s)                                    | Status         |
+|---------------|-------------------------------------------|----------------|
+| ChatGPT       | chat.openai.com, chatgpt.com              | Full support   |
+| Claude        | claude.ai                                  | Full support   |
+| Google Gemini | gemini.google.com                          | Full support   |
+
+Each platform has a dedicated adapter that handles its specific DOM structure:
+- ChatGPT: ProseMirror contenteditable with textarea fallback
+- Claude: ProseMirror contenteditable with role="textbox"
+- Gemini: Quill editor inside Shadow DOM (<rich-textarea> web component)
+
+## Protected Data Types (Detailed)
+
+### 1. Email Addresses
+- Detection: RFC 5322 compliant regex
+- Validation: Pattern matching only (no SMTP verification — that would require network access)
+- Placeholder format: [EMAIL_1], [EMAIL_2], etc.
+- Example: mario.rossi@gmail.com → [EMAIL_1]
+
+### 2. Phone Numbers
+- Detection: Regex with mandatory prefix filter
+- Validation: Must start with international prefix (+XX or 00XX), Italian mobile prefix (3XX), or Italian landline prefix (0X). Length must be 8–15 digits. This eliminates false positives on order IDs, timestamps, and other numeric strings.
+- Placeholder format: [PHONE_1], [PHONE_2], etc.
+- Example: +39 333 1234567 → [PHONE_1]
+
+### 3. Italian Codice Fiscale (Tax Code)
+- Detection: 16-character alphanumeric pattern (6 letters + 2 digits + 1 letter + 2 digits + 1 letter + 3 digits + 1 letter)
+- Validation: Official checksum algorithm. The first 15 characters are mapped through odd/even lookup tables, summed, and the result modulo 26 determines the expected 16th check character. Only codes that pass the checksum are masked.
+- Placeholder format: [CF_1], [CF_2], etc.
+- Example: RSSMRA85M01H501Z → [CF_1]
+
+### 4. IBAN (International Bank Account Number)
+- Detection: Pattern starting with 2 letters + 2 digits, followed by groups of alphanumeric characters
+- Validation: Full MOD-97 algorithm per ISO 13616. The first 4 characters are moved to the end, letters are converted to numbers (A=10, B=11, ..., Z=35), and the resulting large number must equal 1 when divided by 97. Length must be 15–34 characters.
+- Placeholder format: [IBAN_1], [IBAN_2], etc.
+- Example: IT60X0542811101000000123456 → [IBAN_1]
+
+### 5. Credit Card Numbers
+- Detection: Pattern matching for major card networks (Visa 4xxx, Mastercard 51xx-55xx/22xx-27xx, Amex 34xx/37xx, Discover 6011/65xx)
+- Validation: Luhn algorithm (mod-10 checksum). The number must be 13–19 digits and pass the Luhn check.
+- Placeholder format: [CARD_1], [CARD_2], etc.
+- Example: 4111 1111 1111 1111 → [CARD_1]
+
+### 6. IP Addresses
+- Detection: IPv4 (dotted decimal, each octet 0–255) and IPv6 (colon-separated hex groups, including compressed notation with ::)
+- Validation: Pattern validation only
+- Placeholder format: [IP_1], [IP_2], etc.
+- Example: 192.168.1.1 → [IP_1]
+
+### 7. Dates of Birth
+- Detection: Formats DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY, YYYY-MM-DD, YYYY/MM/DD
+- Validation: Plausibility filter. Year must be between 1900 and current year. Month must be 1–12. Day must be 1–31. Future dates are excluded.
+- Placeholder format: [DATE_1], [DATE_2], etc.
+- Example: 15/03/1985 → [DATE_1]
+
+### 8. Italian Tessera Sanitaria (Health Card)
+- Detection: 20-digit numeric string starting with 80 or 8051
+- Validation: Pattern + length check
+- Placeholder format: [TS_1], [TS_2], etc.
+- Example: 80380123456789012345 → [TS_1]
+
+## How Masking Works (Technical)
+
+1. The user types or pastes text into the AI chatbot's input field.
+2. When the user presses Enter or clicks Send, CLOKR intercepts the event (preventDefault + stopImmediatePropagation).
+3. The PII detection engine (pii-detector.js) scans the text with all detectors, applying validation algorithms.
+4. Detected items are sorted by position and de-duplicated (overlapping matches resolved by keeping the longer one).
+5. The masking engine (masker.js) replaces each PII value with a unique placeholder in the format: «CLKR_{sessionId}:{TYPE}_{N}»
+   - «» are Unicode guillemets (U+00AB / U+00BB), not typeable on standard keyboards
+   - sessionId is a random 4-character hex string generated at page load
+   - TYPE is the PII category (EMAIL, PHONE, CF, IBAN, CARD, IP, DATE, TS)
+   - N is a sequential counter per type
+6. The same value always maps to the same placeholder within a session (consistency).
+7. The masked text is inserted into the input field via document.execCommand("insertText") to maintain editor state (ProseMirror/Quill).
+8. CLOKR re-dispatches the Enter key event to submit the masked text to the AI.
+9. A toast notification shows the user how many items were masked and their types.
+10. The count and metadata (no PII) are sent to the background service worker for the popup stats display.
+
+## How De-masking Works (Technical)
+
+1. A polling loop (300ms interval) monitors the page for placeholder markers.
+2. Fast path: if document.body.innerText does not contain "CLKR_", the scan is skipped.
+3. Strategy 1 (text node walk): recursively traverses DOM text nodes, replacing complete placeholders.
+4. Strategy 2 (innerHTML fallback): if the AI's Markdown renderer has fragmented the placeholder across HTML elements (e.g., «<code>CLKR_07a1:EMAIL_1</code>»), CLOKR searches the deepest container elements and does regex replacement on innerHTML, handling Unicode guillemets, HTML entities (&laquo; &raquo;), and intermediate tags.
+5. Input fields and CLOKR's own UI elements are excluded from de-masking.
+
+## Security Architecture
+
+- Zero network calls: The extension never contacts any external server. The manifest includes no host_permissions and the Content Security Policy is "script-src 'self'; object-src 'none'".
+- Minimal permissions: Only "activeTab" (to read/modify the chatbot page) and "storage" (to persist the on/off toggle and counter). No "tabs", no "webRequest", no clipboard access.
+- Manifest V3: Uses the modern Chrome extension platform with Service Workers instead of persistent background pages.
+- Private state: All internal maps (original value ↔ placeholder, reverse map) are encapsulated inside JavaScript closures (IIFEs). They are inaccessible from page scripts, other extensions, or the DevTools console.
+- No PII in logs: Debug logging never includes sensitive data values. Only placeholder identifiers and counts are logged.
+- Session-only memory: PII mappings exist only in JavaScript heap memory. They are never written to localStorage, IndexedDB, chrome.storage, or any persistent storage. When the page is closed or refreshed, all mappings are destroyed.
+- Anti-injection placeholders: The combination of Unicode guillemets, random session ID, and the CLKR_ prefix makes it computationally infeasible for the AI (or a malicious actor) to guess valid placeholders.
+- XSS-safe popup: The extension popup UI is rendered entirely with document.createElement and textContent. No innerHTML with dynamic data is ever used.
+- Content Security Policy: Explicit CSP in the manifest prevents code injection.
+
+## Comparison with Alternatives
+
+| Feature                        | CLOKR          | Server-based maskers | Enterprise DLP         |
+|-------------------------------|----------------|----------------------|------------------------|
+| Processing location           | 100% local     | Cloud server         | Network proxy / agent  |
+| Network calls                 | Zero           | Required             | Required               |
+| Open source                   | Yes (MIT)      | Rarely               | No                     |
+| Price                         | Free           | Freemium / Paid      | Enterprise pricing     |
+| Setup time                    | 10 seconds     | Minutes              | Days to weeks          |
+| Supported AI platforms        | 3 (ChatGPT, Claude, Gemini) | Varies | Varies |
+| Validation algorithms         | Luhn, MOD-97, Checksum | Varies | Varies |
+| Automatic response de-masking | Yes            | Some                 | No (typically)         |
+| Browser permissions required  | activeTab + storage | Often extensive | System-level access    |
+
+## Use Cases
+
+1. Individual users who want to use AI chatbots without exposing personal data
+2. Employees who use ChatGPT/Claude/Gemini for work and need to prevent accidental corporate data leaks
+3. Developers who want to ask AI about code containing API keys, credentials, or client data
+4. Organizations looking for a lightweight, zero-deployment DLP layer for AI tools
+5. Privacy-conscious users who want full transparency (open source) about what runs in their browser
+6. Italian users who need specific protection for Codice Fiscale, IBAN, and Tessera Sanitaria
+
+## Technical Requirements
+
+- Google Chrome version 88 or later (Manifest V3 support)
+- Works on Chrome OS, Windows, macOS, and Linux
+- No server-side dependencies
+- No API keys required
+- No account creation required
+- No internet connection required for the extension itself (only needed for the AI chatbot)
+
+## Project Structure
+
+```
+clokr/
+├── manifest.json              # Extension manifest (Manifest V3)
+├── background.js              # Service worker (stats, messaging)
+├── icons/                     # Extension icons (16, 48, 128px)
+├── popup/
+│   ├── popup.html             # Popup UI
+│   ├── popup.css              # Popup styles (dark theme)
+│   └── popup.js               # Popup logic (createElement-based, XSS-safe)
+└── src/
+    ├── content/
+    │   ├── base-adapter.js    # Shared adapter logic (interception, de-masking, UI)
+    │   ├── chatgpt-adapter.js # ChatGPT-specific selectors and overrides
+    │   ├── claude-adapter.js  # Claude-specific selectors
+    │   ├── gemini-adapter.js  # Gemini-specific selectors (Shadow DOM piercing)
+    │   └── main.js            # Platform router (hostname → adapter)
+    └── utils/
+        ├── pii-detector.js    # PII detection engine (all detectors + validators)
+        └── masker.js          # Masking/de-masking engine (placeholder management)
+```
+
+## Links
+
+- Landing page: https://clokr.dev/
+- Chrome Web Store: https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE
+- GitHub repository: https://github.com/OWNER/clokr
+- Concise LLM documentation: https://clokr.dev/llms.txt
+- Privacy policy: https://clokr.dev/privacy-policy
+
+## Contact
+
+- GitHub Issues: https://github.com/OWNER/clokr/issues
+- Email: contact@clokr.dev
+
+## Changelog
+
+### v2.1.0 (Current)
+- Anti-injection placeholders with random session IDs and Unicode guillemets
+- Response de-masking with innerHTML fallback for fragmented Markdown rendering
+- Separated display labels from internal placeholders
+
+### v2.0.0
+- Complete rewrite with security hardening
+- Added Codice Fiscale checksum validation
+- Added IBAN MOD-97 validation
+- Added Luhn algorithm for credit cards
+- Tightened phone regex with prefix filtering
+- Fixed Enter key race condition
+- Added Content Security Policy to manifest
+- Removed tabs permission
+- Encapsulated reverseMap in closures
+- Removed all PII from console logs
+- Full Claude and Gemini adapter support
+
+### v1.0.0
+- Initial release with ChatGPT support
+- Basic regex-only detection
+- Known security issues (fixed in v2)

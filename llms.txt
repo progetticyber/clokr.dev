@@ -1,0 +1,58 @@
+# CLOKR — AI Privacy Shield
+
+> CLOKR is a free, open-source Chrome extension that automatically masks sensitive personal data (PII) before it reaches AI chatbot servers. 100% local processing, zero servers, zero tracking.
+
+## Overview
+
+CLOKR detects and masks emails, phone numbers, credit card numbers, IBANs, Italian tax codes (Codice Fiscale), IP addresses, dates of birth, and Italian health card numbers (Tessera Sanitaria) in real time, before the user's prompt is submitted to ChatGPT, Claude, or Gemini.
+
+All detection and masking runs locally inside the browser. No data ever leaves the user's device. The extension makes zero network calls and has no backend.
+
+- Install: https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE
+- Source code: https://github.com/OWNER/clokr
+- License: MIT
+- Price: Free
+- Version: 2.1.0
+
+## Supported Platforms
+
+- ChatGPT (chat.openai.com, chatgpt.com)
+- Claude (claude.ai)
+- Google Gemini (gemini.google.com)
+
+## Protected Data Types
+
+- Email addresses (RFC 5322 regex)
+- Phone numbers (international and Italian prefix validation)
+- Italian Codice Fiscale (official checksum algorithm)
+- IBAN numbers (MOD-97 ISO 13616 validation)
+- Credit card numbers (Luhn algorithm + circuit detection)
+- IPv4 and IPv6 addresses
+- Dates of birth (plausibility filter, 1900–today)
+- Italian Tessera Sanitaria (pattern + length validation)
+
+## Key Differentiators
+
+- Zero network calls — no servers, no analytics, no telemetry
+- Cryptographic-grade validation (Luhn, MOD-97, checksum), not just pattern matching
+- Anti-injection placeholders with random session IDs and Unicode guillemets
+- Automatic response de-masking (AI sees placeholders, user reads original values)
+- Session-only memory — PII mappings never persisted to disk
+- Manifest V3 with minimal permissions (activeTab, storage only)
+- Fully open source under MIT license
+
+## Architecture
+
+- Browser: Google Chrome 88+ (Manifest V3)
+- Permissions: activeTab, storage
+- Content Security Policy: script-src 'self'; object-src 'none'
+- Processing: 100% client-side JavaScript, no WebAssembly, no external dependencies
+- State management: in-memory closures (IIFEs), no localStorage, no IndexedDB
+
+## Links
+
+- Landing page: https://clokr.dev/
+- Full documentation for LLMs: https://clokr.dev/llms-full.txt
+- Chrome Web Store: https://chromewebstore.google.com/detail/clokr/EXTENSION_ID_HERE
+- GitHub repository: https://github.com/OWNER/clokr
+- Privacy policy: https://clokr.dev/privacy-policy
